@@ -1,0 +1,13 @@
+python-dotenv
+langchain-chroma==0.2.2
+langchain-google-genai
+langgraph
+langgraph-supervisor
+langmem
+llama-parse
+unstructured-client
+langchain-unstructured
+langchain-experimental
+pandas
+tabulate
+streamlit
