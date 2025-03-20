@@ -7,6 +7,7 @@ from langchain_core.tools import tool
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import AIMessage
+import logging
 
 _ = load_dotenv()
 
@@ -17,7 +18,7 @@ VECTOR_STORE_NAME = "bank_accounts"
 
 google_api_key = os.getenv("GOOGLE_API_KEY")
 
-llm = init_chat_model("gemini-2.0-flash-001", 
+llm = init_chat_model("gemini-1.5-pro", 
                       model_provider="google_genai", 
                       api_key=google_api_key)
 
@@ -30,6 +31,7 @@ vector_store = Chroma(
 @tool(response_format="content_and_artifact")
 def retrieve(query: str):
     """Retrieve information related to a query."""
+    logging.info(f"Inside retrieve tool: {query}")
     retrieved_docs = vector_store.similarity_search(query, k=2)
     serialized = "\n\n".join(
         (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
@@ -45,12 +47,12 @@ config = {"configurable": {"thread_id": "def234"}}
 
 def execute_rag_agent(input_message):
     """Execute the RAG agent with the input message"""
-
+    logging.info(f"Inside execute_rag_agent: {input_message}")
     response = agent_executor.invoke(
         {"messages": [{"role": "user", "content": input_message}]},
         config=config,
     )
-    
+    logging.info(f"Response from agent_executor: {response}")
     # Access the last message in the response
     ai_message = None
     if "messages" in response:
@@ -63,7 +65,7 @@ def execute_rag_agent(input_message):
             elif hasattr(message, "role") and message.role == "assistant":
                 ai_message = message
     else:
-        print(response)
+        logging.error(f"Invalid response from agent_executor: {response}")
     
     return ai_message
 

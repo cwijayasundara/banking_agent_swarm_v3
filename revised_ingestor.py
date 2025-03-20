@@ -4,6 +4,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from pdf_parser import parse_pdf_file
 from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+import logging
 
 _ = load_dotenv()
 
@@ -24,10 +25,12 @@ vector_store = Chroma(embedding_function=embeddings,
 
 def persist_documents_to_vector_store(file_paths):
     """Function to persist documents to vector store"""
+    logging.info(f"Inside persist_documents_to_vector_store: {file_paths}")
 
     # Parse the PDF files
     documents = []
     for file_path in file_paths:
+        logging.info(f"Parsing file: {file_path}")
         documents.extend(parse_pdf_file(file_path))
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)

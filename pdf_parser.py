@@ -10,6 +10,7 @@ You are provided with PDF files that contain information about bank account deta
 These documents contain text data and well as tables with information about the bank accounts.
 You need to extract the text data and tabular data from these PDF files without loosing any information.
 """
+
 def convert_llama_parse_docs_to_langchain_docs(llama_parse_docs: List[dict]):
     """Function to convert LlamaParse documents to Langchain documents"""
 
