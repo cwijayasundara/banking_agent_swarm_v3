@@ -9,6 +9,7 @@ from langchain.chat_models import init_chat_model
 import streamlit as st
 import os
 import logging
+from prompt_txt import supervisor_prompt
 
 _ = load_dotenv()
 
@@ -72,13 +73,16 @@ customer_details_agent = create_react_agent(
     prompt="You are a customer details agent. Use the tools provided to retrieve the customer details from the sql agent."
 )
 
-supervisor_prompt = """
-You are a bank supervisor managing an interest rate agent, pending transactions agent and customer details agent.
-For interest rate related queries, use interest_rate_agent.
-For pending transactions related queries, use pending_tx_agent. Pending_tx_agent's schema contains pending_tx_id,customer_id,pending_date,pending_amount.
-For customer details related queries, use customer_details_agent. Customer_details_agent's schema contains id,first_name,last_name,address,account_balance,income,gender,date_of_birth.
-For more complex queries, do use more than one agent to retrieve the information.
-"""
+# supervisor_prompt = """
+# You are a bank supervisor managing an interest_rate_agent, customer_details_agent and pending_tx_agent.
+# - For interest rate related queries, use interest_rate_agent.
+# - For pending transactions related queries, use pending_tx_agent. Pending_tx_agent's Pandas schema contains pending_tx_id,customer_id,pending_date,pending_amount.
+# - For customer details related queries, use customer_details_agent. Customer_details_agent's schema contains id,first_name,last_name,address,account_balance,income,gender,date_of_birth.
+# - For more complex queries, do use more than one agent to retrieve required information and pass the information to the next agent.
+# Some examples below given as query, approach syntax.
+# - Query: What is the sum of pending transactions of John Doe?
+# - Approach: first get the customer_id from the customer_details_agent by using the customer first_name & last_name and then pass the customer_id to the pending_tx_agent as here customer first_name & last_name are not provided. 
+# """
 
 # supervisor - Process each query individually instead of all at once
 workflow = create_supervisor(
